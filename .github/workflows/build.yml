@@ -20,13 +20,26 @@ jobs:
         # GitHub Actions MacOS 14 имеет Xcode 16.1 по умолчанию
         xcodebuild -version
 
-    - name: Download LibXray.xcframework
+    - name: Download and setup LibXray.xcframework
       run: |
         curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/download/25.12.8/LibXray.xcframework.zip
-        unzip -q LibXray.xcframework.zip
+        unzip -o -q LibXray.xcframework.zip
         rm LibXray.xcframework.zip
+
+        # Create module.modulemap for each platform
+        for platform in ios-arm64 ios-arm64_x86_64-simulator tvos-arm64 tvos-arm64_x86_64-simulator macos-arm64_x86_64; do
+          mkdir -p "LibXray.xcframework/$platform/Modules"
+          cat > "LibXray.xcframework/$platform/Modules/module.modulemap" << 'EOF'
+        framework module LibXray {
+            umbrella header "libXray.h"
+            export *
+            module * { export * }
+        }
+        EOF
+        done
+
         ls -la LibXray.xcframework/
-        echo "LibXray.xcframework downloaded successfully"
+        echo "LibXray.xcframework setup completed"
 
     - name: Build PicoVPN
       run: |
