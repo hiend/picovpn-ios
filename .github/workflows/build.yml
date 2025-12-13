@@ -38,7 +38,15 @@ jobs:
         EOF
         done
 
+        # Update Info.plist to include ModulesPath
+        /usr/libexec/PlistBuddy -c "Set :AvailableLibraries:0:ModulesPath Modules" LibXray.xcframework/Info.plist
+        /usr/libexec/PlistBuddy -c "Set :AvailableLibraries:1:ModulesPath Modules" LibXray.xcframework/Info.plist
+        /usr/libexec/PlistBuddy -c "Set :AvailableLibraries:2:ModulesPath Modules" LibXray.xcframework/Info.plist
+        /usr/libexec/PlistBuddy -c "Set :AvailableLibraries:3:ModulesPath Modules" LibXray.xcframework/Info.plist
+        /usr/libexec/PlistBuddy -c "Set :AvailableLibraries:4:ModulesPath Modules" LibXray.xcframework/Info.plist
+
         ls -la LibXray.xcframework/
+        cat LibXray.xcframework/Info.plist
         echo "LibXray.xcframework setup completed"
 
     - name: Build PicoVPN
