@@ -22,7 +22,7 @@ jobs:
 
     - name: Download and setup LibXray.xcframework
       run: |
-        curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/download/25.8.3/LibXray.xcframework.zip
+        curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/download/25.12.8/LibXray.xcframework.zip
         unzip -o -q LibXray.xcframework.zip
         rm LibXray.xcframework.zip
 

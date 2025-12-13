@@ -1,7 +1,6 @@
 import NetworkExtension
 import Network
 import Tun2SocksKit
-import LibXray
 import os
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
