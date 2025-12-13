@@ -25,6 +25,8 @@ jobs:
         curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/download/25.12.8/LibXray.xcframework.zip
         unzip -q LibXray.xcframework.zip
         rm LibXray.xcframework.zip
+        ls -la LibXray.xcframework/
+        echo "LibXray.xcframework downloaded successfully"
 
     - name: Build PicoVPN
       run: |
