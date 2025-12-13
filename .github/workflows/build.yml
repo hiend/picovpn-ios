@@ -16,7 +16,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Select Xcode version
-      run: sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+      run: |
+        # GitHub Actions MacOS 14 имеет Xcode 16.1 по умолчанию
+        xcodebuild -version
 
     - name: Download Xray.xcframework
       run: |
