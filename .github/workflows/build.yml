@@ -46,15 +46,23 @@ jobs:
         xcodebuild -scheme PicoVPN \
           -configuration Release \
           -sdk iphoneos \
-          -archivePath ./build/PicoVPN.xcarchive \
-          archive \
+          -derivedDataPath ./build \
+          build \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          FRAMEWORK_SEARCH_PATHS="\$(inherited) \$(PROJECT_DIR)"
+          FRAMEWORK_SEARCH_PATHS="\$(inherited) \$(PROJECT_DIR)" \
+          ONLY_ACTIVE_ARCH=NO
 
-    - name: Upload Archive
+    - name: Create IPA
+      run: |
+        cd build/Build/Products/Release-iphoneos
+        mkdir -p Payload
+        cp -r PicoVPN.app Payload/
+        zip -r PicoVPN.ipa Payload
+
+    - name: Upload IPA
       uses: actions/upload-artifact@v4
       with:
-        name: PicoVPN.xcarchive
-        path: build/PicoVPN.xcarchive
+        name: PicoVPN.ipa
+        path: build/Build/Products/Release-iphoneos/PicoVPN.ipa
