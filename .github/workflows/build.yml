@@ -30,10 +30,9 @@ jobs:
         for platform in ios-arm64 ios-arm64_x86_64-simulator tvos-arm64 tvos-arm64_x86_64-simulator macos-arm64_x86_64; do
           mkdir -p "LibXray.xcframework/$platform/Modules"
           cat > "LibXray.xcframework/$platform/Modules/module.modulemap" << 'EOF'
-        framework module LibXray {
-            umbrella header "libXray.h"
+        module LibXray {
+            header "../Headers/libXray.h"
             export *
-            module * { export * }
         }
         EOF
         done
