@@ -30,13 +30,15 @@ jobs:
     - name: Create module.modulemap for Xray
       run: |
         for dir in Xray.xcframework/*/; do
-          mkdir -p "${dir}Modules"
-          cat > "${dir}Modules/module.modulemap" << 'EOF'
+          if [ -d "${dir}Headers" ]; then
+            cat > "${dir}Headers/module.modulemap" << 'EOF'
         module Xray {
             header "libXray.h"
             export *
         }
         EOF
+            echo "Created module.modulemap in ${dir}Headers/"
+          fi
         done
 
     - name: Build PicoVPN

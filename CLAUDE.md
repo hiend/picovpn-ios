@@ -40,13 +40,14 @@ rm LibXray.xcframework.zip
 
 # Создать module.modulemap для всех платформ (для совместимости с import Xray)
 for dir in Xray.xcframework/*/; do
-  mkdir -p "${dir}Modules"
-  cat > "${dir}Modules/module.modulemap" << 'EOF'
+  if [ -d "${dir}Headers" ]; then
+    cat > "${dir}Headers/module.modulemap" << 'EOF'
 module Xray {
     header "libXray.h"
     export *
 }
 EOF
+  fi
 done
 ```
 
