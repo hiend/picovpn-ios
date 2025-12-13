@@ -119,3 +119,131 @@ Shared код между target:
 2. При изменении профиля активного подключения — использовать `restart()`
 3. Проект не публикуется в App Store (см. README, только TestFlight)
 4. Team ID: `2ZHWSJ25BU`, Bundle ID: `me.lsong.picovpn`
+
+---
+
+## История настройки проекта (декабрь 2024)
+
+### Проблемы и решения при первой сборке
+
+#### 1. Проблема версии Xcode
+**Проблема**: Проект использует `objectVersion = 70` (Xcode 16.0+), локально установлен только Xcode 15.2
+**Решение**: Создан GitHub Actions workflow (`.github/workflows/build.yml`) для автоматической сборки на `macos-15` runner с Xcode 16.4
+
+#### 2. Отсутствие LibXray.xcframework
+**Проблема**: LibXray.xcframework не включён в репозиторий (gitignore)
+**Решение**: Workflow автоматически скачивает LibXray 25.12.8:
+```bash
+curl -L -o LibXray.xcframework.zip \
+  https://github.com/wanliyunyan/LibXray/releases/download/25.12.8/LibXray.xcframework.zip
+```
+
+#### 3. Отсутствие module.modulemap
+**Проблема**: LibXray 25.12.8 — статическая библиотека без модульной карты, Swift не мог найти модуль
+**Решение**: Workflow создаёт `module.modulemap` для каждой платформы:
+```bash
+for platform in ios-arm64 ios-arm64_x86_64-simulator tvos-arm64 \
+                tvos-arm64_x86_64-simulator macos-arm64_x86_64; do
+  mkdir -p "LibXray.xcframework/$platform/Modules"
+  cat > "LibXray.xcframework/$platform/Modules/module.modulemap" << 'EOF'
+module LibXray {
+    header "../Headers/libXray.h"
+    export *
+}
+EOF
+done
+```
+
+Затем обновляет `Info.plist` для указания `ModulesPath`:
+```bash
+for i in 0 1 2 3 4; do
+  /usr/libexec/PlistBuddy -c \
+    "Add :AvailableLibraries:$i:ModulesPath string Modules" \
+    LibXray.xcframework/Info.plist 2>/dev/null || true
+done
+```
+
+#### 4. Изменение API LibXray
+**Проблема**: LibXray 25.12.8 использует новый CGo API вместо старого:
+- Старый код: `XrayStart()`, `XrayStop()`, `XraySetEnv()`
+- Новый API: `CGoRunXray()`, `CGoStopXray()`, `CGoXrayVersion()` с base64-кодированием
+
+**Решение**: Созданы wrapper-функции в `Common/Common.swift` (строки 39-110):
+```swift
+import LibXray
+
+// MARK: - LibXray Wrapper Functions
+
+public func XraySetEnv(_ key: String, _ value: String) {
+    // Environment setting is now handled differently
+}
+
+public func XrayStart(_ configPath: String) {
+    do {
+        let configData = try Data(contentsOf: URL(fileURLWithPath: configPath))
+        let base64Config = configData.base64EncodedString()
+        _ = CGoRunXray(strdup(base64Config))
+    } catch {
+        print("Failed to load config: \(error)")
+    }
+}
+
+public func XrayStop() {
+    _ = CGoStopXray()
+}
+
+public func XrayVersion() -> String {
+    if let version = CGoXrayVersion() {
+        return String(cString: version)
+    }
+    return "unknown"
+}
+
+// Аналогично для XrayConvertXrayJsonToShareLinks,
+// XrayConvertShareLinksToXrayJson, XrayGetFreePort, XrayLoadGeoData
+```
+
+#### 5. Проблемы линковки
+**Проблема**: LibXray был привязан только к PicoTunnelExtension и PicoWidgetExtension, но не к главному target PicoVPN, что вызывало ошибки линковки в AboutView.swift при вызове `XrayVersion()`
+
+**Решение**: Добавлен LibXray.xcframework в PBXFrameworksBuildPhase главного target PicoVPN в `project.pbxproj`:
+```
+97DC74D02CA28BBF005BF0E8 /* Frameworks */ = {
+    files = (
+        97F9DA582D7A9B8800DF72A2 /* SwiftUIX in Frameworks */,
+        974CB5672D59E7F600D0D25B /* libresolv.tbd in Frameworks */,
+        973F95A12D5A4A6000D59EAF /* CodeScanner in Frameworks */,
+        9785156B2D79601F003CEF6B /* LibXray.xcframework in Frameworks */,
+    );
+}
+```
+
+### Результат
+
+✅ Проект успешно собирается на GitHub Actions
+✅ Артефакт PicoVPN.ipa создаётся автоматически при каждом push в master
+✅ Все три target (PicoVPN, PicoTunnelExtension, PicoWidgetExtension) успешно компилируются
+✅ Workflow: https://github.com/hiend/picovpn-ios/actions
+
+### Коммиты настройки
+
+1. `019882b` - first commit (исходный репозиторий)
+2. `543b3e1` - Create LibXrayShim with @_exported import (первая попытка wrapper)
+3. `a87e09a` - Add LibXray wrapper functions directly in PacketTunnelProvider
+4. `a354196` - Remove duplicate wrapper functions from PacketTunnelProvider
+5. `464faa4` - Add LibXray.xcframework to PicoVPN target frameworks (финальное исправление)
+
+### Файлы, изменённые для сборки
+
+- `.github/workflows/build.yml` - CI/CD для автоматической сборки
+- `Common/Common.swift` - добавлены wrapper-функции для LibXray CGo API
+- `PicoVPN.xcodeproj/project.pbxproj` - добавлен LibXray в Frameworks главного target
+- `.gitignore` - обновлён для LibXray.xcframework
+- Удалены `import LibXray` из нескольких view-файлов (Config.swift, Inbound.swift, AboutView.swift, DatasetsView.swift)
+
+### Рекомендации для будущих обновлений
+
+1. **При обновлении LibXray**: проверить совместимость CGo API, возможно потребуется обновить wrapper-функции
+2. **Для локальной сборки с Xcode 15.x**: невозможна, используйте GitHub Actions
+3. **Для локальной сборки с Xcode 16+**: скачайте LibXray.xcframework вручную и выполните настройку module.modulemap локально (см. workflow)
+4. **При добавлении новых target**: не забыть добавить LibXray.xcframework в Frameworks нового target
