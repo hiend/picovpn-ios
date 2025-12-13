@@ -43,6 +43,7 @@
 		977FAA052D3A16230006552A /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977FAA042D3A16230006552A /* Common.swift */; };
 		977FAA092D3A17030006552A /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977FAA042D3A16230006552A /* Common.swift */; };
 		9785156A2D79601E003CEF6B /* LibXray.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978515692D79601E003CEF6B /* LibXray.xcframework */; };
+	9785156B2D79601F003CEF6B /* LibXray.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978515692D79601E003CEF6B /* LibXray.xcframework */; };
 		978E87802D682B32007D2DBE /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978E877F2D682B32007D2DBE /* Metrics.swift */; };
 		978E87832D682D40007D2DBE /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978E877F2D682B32007D2DBE /* Metrics.swift */; };
 		97A141E92D635B6A00E1A697 /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A141E82D635B6A00E1A697 /* Dataset.swift */; };
@@ -231,6 +232,7 @@
 				97F9DA582D7A9B8800DF72A2 /* SwiftUIX in Frameworks */,
 				974CB5672D59E7F600D0D25B /* libresolv.tbd in Frameworks */,
 				973F95A12D5A4A6000D59EAF /* CodeScanner in Frameworks */,
+				9785156B2D79601F003CEF6B /* LibXray.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
