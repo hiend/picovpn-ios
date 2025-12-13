@@ -38,11 +38,9 @@ jobs:
         done
 
         # Update Info.plist to include ModulesPath
-        /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:0:ModulesPath string Modules" LibXray.xcframework/Info.plist
-        /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:1:ModulesPath string Modules" LibXray.xcframework/Info.plist
-        /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:2:ModulesPath string Modules" LibXray.xcframework/Info.plist
-        /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:3:ModulesPath string Modules" LibXray.xcframework/Info.plist
-        /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:4:ModulesPath string Modules" LibXray.xcframework/Info.plist
+        for i in 0 1 2 3 4; do
+          /usr/libexec/PlistBuddy -c "Add :AvailableLibraries:$i:ModulesPath string Modules" LibXray.xcframework/Info.plist 2>/dev/null || true
+        done
 
         ls -la LibXray.xcframework/
         cat LibXray.xcframework/Info.plist
