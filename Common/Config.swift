@@ -4,7 +4,7 @@
 //
 //  Created by Lsong on 1/23/25.
 //
-import Xray
+import LibXray
 import SwiftUI
 import Foundation
 import UniformTypeIdentifiers

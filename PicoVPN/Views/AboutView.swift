@@ -1,4 +1,4 @@
-import Xray
+import LibXray
 import SwiftUI
 
 struct CreditsView: View {

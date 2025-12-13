@@ -21,37 +21,22 @@ xcodebuild -scheme PicoWidgetExtension -configuration Debug build
 - iOS 16.6+
 - **Xcode 16.0+** (проект использует objectVersion 70 и PBXFileSystemSynchronizedRootGroup, несовместим с Xcode 15)
 - Swift 5.0
-- Xray.xcframework
+- LibXray.xcframework
 
 **Важно**: Если у вас Xcode 15.x, используйте GitHub Actions для сборки (см. `.github/workflows/build.yml`)
 
-### Получение Xray.xcframework
+### Получение LibXray.xcframework
 
-Xray.xcframework исключен из git (.gitignore). Для его добавления:
+LibXray.xcframework исключен из git (.gitignore). Для его добавления:
 
 ```bash
 # Скачать последний релиз LibXray
 curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/latest/download/LibXray.xcframework.zip
 
-# Распаковать и переименовать
+# Распаковать
 unzip -q LibXray.xcframework.zip
-mv LibXray.xcframework Xray.xcframework
 rm LibXray.xcframework.zip
-
-# Создать module.modulemap для всех платформ (для совместимости с import Xray)
-for dir in Xray.xcframework/*/; do
-  if [ -d "${dir}Headers" ]; then
-    cat > "${dir}Headers/module.modulemap" << 'EOF'
-module Xray {
-    header "libXray.h"
-    export *
-}
-EOF
-  fi
-done
 ```
-
-**Примечание**: Оригинальный модуль называется `LibXray`, но в коде используется `import Xray`. Module.modulemap создает alias для совместимости.
 
 ## Архитектура проекта
 
@@ -117,7 +102,7 @@ Shared код между target:
 - API для получения статистики доступен через `findMetricsPort()`
 
 ### Dependencies
-- **Xray.xcframework**: Core VPN engine на базе [LibXray](https://github.com/wanliyunyan/LibXray)
+- **LibXray.xcframework**: Core VPN engine на базе [LibXray](https://github.com/wanliyunyan/LibXray)
 - **Tun2SocksKit**: SOCKS5 to TUN converter
 - **CodeScanner**: QR code scanning для импорта конфигураций
 - **SwiftUIX**: UI utilities
