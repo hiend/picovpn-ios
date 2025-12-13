@@ -18,7 +18,7 @@ xcodebuild -scheme PicoWidgetExtension -configuration Debug build
 
 ## Требования
 
-- iOS 16.6+
+- iOS 16.1+ (требуется для Dynamic Island API в PicoWidgetExtension)
 - **Xcode 16.0+** (проект использует objectVersion 70 и PBXFileSystemSynchronizedRootGroup, несовместим с Xcode 15)
 - Swift 5.0
 - LibXray.xcframework

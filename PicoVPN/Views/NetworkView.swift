@@ -43,29 +43,83 @@ struct NetworkSettingsView: View {
             
             
             Section(footer: Text("If YES, the VPN connection will be disconnected when the device goes to sleep. The default is NO.")) {
-                Toggle("Disconnect On Sleep", isOn: $appManager.tunnelProvider.disconnectOnSleep)
+                Toggle("Disconnect On Sleep", isOn: Binding(
+                    get: { self.appManager.tunnelProvider.disconnectOnSleep },
+                    set: { newValue in
+                        if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                            let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                            mutableProtocol.disconnectOnSleep = newValue
+                            self.appManager.tunnelProvider = mutableProtocol
+                        }
+                    }
+                ))
             }
-            
+
             Section(footer: Text("If YES, route rules for this tunnel will take precendence over any locally-defined routes. The default is NO.")) {
-                Toggle("Enforce Routes", isOn: $appManager.tunnelProvider.enforceRoutes)
+                Toggle("Enforce Routes", isOn: Binding(
+                    get: { self.appManager.tunnelProvider.enforceRoutes },
+                    set: { newValue in
+                        if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                            let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                            mutableProtocol.enforceRoutes = newValue
+                            self.appManager.tunnelProvider = mutableProtocol
+                        }
+                    }
+                ))
             }
-            
+
             Section(footer: Text("If YES, all network traffic is routed through the tunnel, with some exclusions.")) {
-                Toggle("Include All Networks", isOn: $appManager.tunnelProvider.includeAllNetworks)
+                Toggle("Include All Networks", isOn: Binding(
+                    get: { self.appManager.tunnelProvider.includeAllNetworks },
+                    set: { newValue in
+                        if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                            let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                            mutableProtocol.includeAllNetworks = newValue
+                            self.appManager.tunnelProvider = mutableProtocol
+                        }
+                    }
+                ))
             }
             
             if appManager.tunnelProvider.includeAllNetworks {
                 
                 Section(footer: Text("If YES, all traffic destined for local networks will be excluded from the tunnel. The default is NO on macOS and YES on iOS.")) {
-                    Toggle("Exclude Local Networks", isOn: $appManager.tunnelProvider.excludeLocalNetworks)
+                    Toggle("Exclude Local Networks", isOn: Binding(
+                        get: { self.appManager.tunnelProvider.excludeLocalNetworks },
+                        set: { newValue in
+                            if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                                let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                                mutableProtocol.excludeLocalNetworks = newValue
+                                self.appManager.tunnelProvider = mutableProtocol
+                            }
+                        }
+                    ))
                 }
-                
+
                 Section(footer: Text("If YES, The internet-routable network traffic for cellular services (VoLTE, Wi-Fi Calling, IMS, MMS, Visual Voicemail, etc.) is excluded from the tunnel.")) {
-                    Toggle("Exclude Cellular Services", isOn: $appManager.tunnelProvider.excludeCellularServices)
+                    Toggle("Exclude Cellular Services", isOn: Binding(
+                        get: { self.appManager.tunnelProvider.excludeCellularServices },
+                        set: { newValue in
+                            if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                                let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                                mutableProtocol.excludeCellularServices = newValue
+                                self.appManager.tunnelProvider = mutableProtocol
+                            }
+                        }
+                    ))
                 }
-                
+
                 Section(footer: Text("If includeAllNetworks is set to YES and this property is set to YES, then network traffic for the Apple Push Notification service (APNs) is excluded from the tunnel. The default value of this property is YES.")) {
-                    Toggle("Exclude APNs", isOn: $appManager.tunnelProvider.excludeAPNs)
+                    Toggle("Exclude APNs", isOn: Binding(
+                        get: { self.appManager.tunnelProvider.excludeAPNs },
+                        set: { newValue in
+                            if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                                let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                                mutableProtocol.excludeAPNs = newValue
+                                self.appManager.tunnelProvider = mutableProtocol
+                            }
+                        }
+                    ))
                 }
                 
                 if #available(iOS 17.4, *) {
