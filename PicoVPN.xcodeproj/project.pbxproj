@@ -210,6 +210,7 @@
 				97602A682CA3AFCF0068585D /* NetworkExtension.framework in Frameworks */,
 				97D11A332D5C4D3D006CF828 /* libresolv.tbd in Frameworks */,
 				971BCB932D3974950050B7A2 /* Tun2SocksKitC in Frameworks */,
+				9785156A2D79601E003CEF6B /* Xray.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
