@@ -62,6 +62,7 @@ jobs:
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
           FRAMEWORK_SEARCH_PATHS="\$(inherited) \$(SRCROOT) \$(PROJECT_DIR)" \
+          SWIFT_INCLUDE_PATHS="\$(inherited) \$(SRCROOT)/LibXray.xcframework/ios-arm64/Modules" \
           ONLY_ACTIVE_ARCH=NO
 
     - name: Create IPA
