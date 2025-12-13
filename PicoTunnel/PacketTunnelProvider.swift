@@ -1,27 +1,7 @@
 import NetworkExtension
 import Network
 import Tun2SocksKit
-import LibXray
 import os
-
-// Wrapper functions for LibXray CGo API
-private func XraySetEnv(_ key: String, _ value: String) {
-    // Environment setting is now handled differently in the new version
-}
-
-private func XrayStart(_ configPath: String) {
-    do {
-        let configData = try Data(contentsOf: URL(fileURLWithPath: configPath))
-        let base64Config = configData.base64EncodedString()
-        _ = CGoRunXray(strdup(base64Config))
-    } catch {
-        os_log("Failed to load config: \(error.localizedDescription)")
-    }
-}
-
-private func XrayStop() {
-    _ = CGoStopXray()
-}
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     let defaults = UserDefaults(suiteName: Common.groupName)!
