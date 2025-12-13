@@ -1,28 +1,7 @@
-import Foundation
 import NetworkExtension
 import Network
 import Tun2SocksKit
-import LibXray
 import os
-
-// MARK: - LibXray Wrapper Functions
-private func XraySetEnv(_ key: String, _ value: String) {
-    // Environment setting is now handled differently
-}
-
-private func XrayStart(_ configPath: String) {
-    do {
-        let configData = try Data(contentsOf: URL(fileURLWithPath: configPath))
-        let base64Config = configData.base64EncodedString()
-        _ = CGoRunXray(strdup(base64Config))
-    } catch {
-        print("Failed to load config: \(error)")
-    }
-}
-
-private func XrayStop() {
-    _ = CGoStopXray()
-}
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     let defaults = UserDefaults(suiteName: Common.groupName)!
