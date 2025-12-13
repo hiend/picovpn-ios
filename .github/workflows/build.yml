@@ -48,7 +48,8 @@ jobs:
           archive \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          FRAMEWORK_SEARCH_PATHS="\$(inherited) \$(PROJECT_DIR)"
 
     - name: Upload Archive
       uses: actions/upload-artifact@v4
