@@ -96,30 +96,32 @@ struct NetworkSettingsView: View {
                     ))
                 }
 
-                Section(footer: Text("If YES, The internet-routable network traffic for cellular services (VoLTE, Wi-Fi Calling, IMS, MMS, Visual Voicemail, etc.) is excluded from the tunnel.")) {
-                    Toggle("Exclude Cellular Services", isOn: Binding(
-                        get: { self.appManager.tunnelProvider.excludeCellularServices },
-                        set: { newValue in
-                            if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
-                                let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
-                                mutableProtocol.excludeCellularServices = newValue
-                                self.appManager.tunnelProvider = mutableProtocol
+                if #available(iOS 16.4, *) {
+                    Section(footer: Text("If YES, The internet-routable network traffic for cellular services (VoLTE, Wi-Fi Calling, IMS, MMS, Visual Voicemail, etc.) is excluded from the tunnel.")) {
+                        Toggle("Exclude Cellular Services", isOn: Binding(
+                            get: { self.appManager.tunnelProvider.excludeCellularServices },
+                            set: { newValue in
+                                if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                                    let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                                    mutableProtocol.excludeCellularServices = newValue
+                                    self.appManager.tunnelProvider = mutableProtocol
+                                }
                             }
-                        }
-                    ))
-                }
+                        ))
+                    }
 
-                Section(footer: Text("If includeAllNetworks is set to YES and this property is set to YES, then network traffic for the Apple Push Notification service (APNs) is excluded from the tunnel. The default value of this property is YES.")) {
-                    Toggle("Exclude APNs", isOn: Binding(
-                        get: { self.appManager.tunnelProvider.excludeAPNs },
-                        set: { newValue in
-                            if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
-                                let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
-                                mutableProtocol.excludeAPNs = newValue
-                                self.appManager.tunnelProvider = mutableProtocol
+                    Section(footer: Text("If includeAllNetworks is set to YES and this property is set to YES, then network traffic for the Apple Push Notification service (APNs) is excluded from the tunnel. The default value of this property is YES.")) {
+                        Toggle("Exclude APNs", isOn: Binding(
+                            get: { self.appManager.tunnelProvider.excludeAPNs },
+                            set: { newValue in
+                                if let tunnelProtocol = self.appManager.tunnelProvider as? NETunnelProviderProtocol {
+                                    let mutableProtocol = tunnelProtocol.copy() as! NETunnelProviderProtocol
+                                    mutableProtocol.excludeAPNs = newValue
+                                    self.appManager.tunnelProvider = mutableProtocol
+                                }
                             }
-                        }
-                    ))
+                        ))
+                    }
                 }
                 
                 if #available(iOS 17.4, *) {
