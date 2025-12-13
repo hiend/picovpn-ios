@@ -1,0 +1,55 @@
+name: Build PicoVPN
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Select Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+
+    - name: Download Xray.xcframework
+      run: |
+        curl -L -o LibXray.xcframework.zip https://github.com/wanliyunyan/LibXray/releases/download/25.12.8/LibXray.xcframework.zip
+        unzip -q LibXray.xcframework.zip
+        mv LibXray.xcframework Xray.xcframework
+        rm LibXray.xcframework.zip
+
+    - name: Create module.modulemap for Xray
+      run: |
+        for dir in Xray.xcframework/*/; do
+          mkdir -p "${dir}Modules"
+          cat > "${dir}Modules/module.modulemap" << 'EOF'
+        module Xray {
+            header "libXray.h"
+            export *
+        }
+        EOF
+        done
+
+    - name: Build PicoVPN
+      run: |
+        xcodebuild -scheme PicoVPN \
+          -configuration Release \
+          -sdk iphoneos \
+          -archivePath ./build/PicoVPN.xcarchive \
+          archive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Upload Archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: PicoVPN.xcarchive
+        path: build/PicoVPN.xcarchive
