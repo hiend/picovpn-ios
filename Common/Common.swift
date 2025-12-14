@@ -8,9 +8,17 @@ public enum Common {
     public static let tunnelName = "\(packageName).tunnel"
     
     public static let containerURL: URL = {
-        guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupName) else {
-            fatalError("无法加载共享文件路径")
+        // Try to get App Group container, fallback to app's Documents if unavailable
+        let url: URL
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupName) {
+            url = groupURL
+        } else {
+            // Fallback: use app's Documents directory (happens when App Group entitlement is missing)
+            print("Warning: App Group container not available, using Documents directory")
+            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            url = documentsURL.appendingPathComponent("picovpn-shared")
         }
+
         let fileManager = FileManager.default
         let directories = [
             url.appendingPathComponent("logs"),
